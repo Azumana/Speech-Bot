@@ -104,7 +104,7 @@ venv.bak/
 .mypy_cache/
 
 #Json
-.json
+*.json
 
 #Sound Wave
-.wav
+*.wav
