@@ -1,0 +1,10 @@
+azure-cognitiveservices-speech==1.5.1
+beautifulsoup4==4.7.1
+bs4==0.0.1
+certifi==2019.3.9
+chardet==3.0.4
+idna==2.8
+PyMySQL==0.9.3
+requests==2.22.0
+soupsieve==1.9.1
+urllib3==1.25.2
