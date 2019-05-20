@@ -16,9 +16,9 @@ class sql:
     def selectRequest(self):
 
         connection = pymysql.connect(host='localhost',
-                                     user='mcdb',
-                                     password='marina',
-                                     db='promodataia',
+                                     user='user',
+                                     password='pass',
+                                     db='database',
                                      charset='utf8mb4',
                                      cursorclass=pymysql.cursors.DictCursor)
 
