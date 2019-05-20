@@ -67,23 +67,35 @@ if __name__ == '__main__':
     record = speech_recognizer.recognize_once()
     # create an object to stock informations
     mem = MEMORY.Memory(record)
-    print(record.text.lower())
+
     # Use a loop for the conversation
     while "au revoir." not in record.text.lower():
 
         # Check record
         if record.reason == speechsdk.ResultReason.RecognizedSpeech:
             question = record.text.rstrip(".")
+            print("q = ", question)
             # get the answer from the chatbot program
             answer = bot.bobot(question, mem)
             print(answer)
 
             # check if chatbot already answered to this question :-)
             if mem.answer.count(answer) > 1:
-                botres = ttsp.TextToSpeech(speech_key, service_region, "J'ai déjà répondu à cette question !")
+                botres = ttsp.TextToSpeech(speech_key, service_region, "J'ai déjà répondu à cette question !"
+                                                                       "veux-tu vraiment que je me répète ?")
                 botres.get_token()
                 botres.save_audio('again.wav')
                 botres.read_audio('again.wav')
+
+                recordbis = speech_recognizer.recognize_once()
+                print("recordbis = ", recordbis)
+                if "s'il te plaît" in recordbis.text.lower():
+                    print("OUI !")
+                    botres = ttsp.TextToSpeech(speech_key, service_region, answer)
+                    botres.get_token()
+                    botres.save_audio('answer.wav')
+                    botres.read_audio('answer.wav')
+
 
             else:
                 botres = ttsp.TextToSpeech(speech_key, service_region, answer)
