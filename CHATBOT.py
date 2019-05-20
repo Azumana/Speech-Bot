@@ -41,6 +41,14 @@ def getkeyword(word):
                 return k
 
 
+def createsql(colum, table, wherecol="Students", whereval="NULL"):
+    """Use to create a sql object"""
+    print("IN")
+    sqlobject = SQL.sql(colum, table, wherecol, whereval)
+
+    return sqlobject
+
+
 def getsql(colum, table, wherecol="Students", whereval="NULL"):
     """Use to make a sql request"""
     sqlobject = SQL.sql(colum, table, wherecol, whereval)
@@ -89,7 +97,14 @@ def getanswer(name, info, memory):
         inlen = len(info)
         if nalen == 1 and inlen == 1:
             sql = getsql(info, "Students", "prenom", name[0])
-            result = "le " + info[0] + " de " + name[0] + " est " + sql[0]
+            print("info ! ", info)
+            if info[0] == "horoscope":
+                print("One !")
+                objSQL = createsql(info[0], "Students", "prenom", name[0])
+                result = "l'horoscope de " + name[0] + " est " + objSQL.getHoroscope()
+
+            else:
+                result = "le " + info[0] + " de " + name[0] + " est " + sql[0]
             memory.answer.append(result)
             return result
 
@@ -97,19 +112,27 @@ def getanswer(name, info, memory):
             result = ""
             for na in name:
                 nalen -= 1
+
                 sql = getsql(info, "Students", "prenom", na)
                 count = 0
 
                 for i in info:
                     inlen -= 1
                     record = sql[count]
-                    result = result + "le " + i + " de " + na + " est "
-                    if inlen > 1:
-                        result = result + record + ", "
-                    elif inlen == 1:
-                        result = result + record + " et "
+
+                    if i == "horoscope":
+                        print("new !")
+                        objSQL = createsql(i, "Students", "prenom", na)
+                        result = "l'horoscope de " + na + " est " + objSQL.getHoroscope()
+
                     else:
-                        result = result + record
+                        result = result + "le " + i + " de " + na + " est "
+                        if inlen > 1:
+                            result = result + record + ", "
+                        elif inlen == 1:
+                            result = result + record + " et "
+                        else:
+                            result = result + record
                     count += 1
 
                 if nalen > 1:
@@ -142,14 +165,17 @@ def bobot(question, memory):
             elif keyword != "":
                 keylist.append(keyword)
 
+            if word == "l'horoscope" or word == "horoscope":
+                keylist.append("horoscope")
+
             if word == "son" or word == "leur":
                 lastAnswer = memory.getLast().split()
 
-        if len(namelist) == 0 or lastAnswer is not None:
+        if len(namelist) == 0 and lastAnswer is not None:
             for name in lastAnswer:
                 if getkeyword(name) == "prenom":
                     namelist.append(name)
-
+        print(namelist, keylist, memory)
         return getanswer(namelist, keylist, memory)
 
     else:

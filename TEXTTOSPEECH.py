@@ -4,13 +4,14 @@ from xml.etree import ElementTree
 
 class TextToSpeech(object):
 
-    def __init__(self, subscription_key, SpeechText):
+    def __init__(self, subscription_key, region, SpeechText):
         self.subscription_key = subscription_key
         self.tts = SpeechText
+        self.region = region
         self.access_token = None
 
     def get_token(self):
-        fetch_token_url = "token"
+        fetch_token_url = "https://" + self.region + ".api.cognitive.microsoft.com/sts/v1.0/issuetoken"
         headers = {
             'Ocp-Apim-Subscription-Key': self.subscription_key
         }
@@ -18,7 +19,7 @@ class TextToSpeech(object):
         self.access_token = str(response.text)
 
     def save_audio(self, wavName):
-        base_url = 'base_url'
+        base_url = 'https://' + self.region + '.tts.speech.microsoft.com/'
         path = 'cognitiveservices/v1'
         constructed_url = base_url + path
         headers = {
