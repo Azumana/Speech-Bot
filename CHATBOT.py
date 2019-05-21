@@ -54,6 +54,7 @@ def getdiffword(word):
 
 def createsql(colum, table, wherecol="Students", whereval="NULL"):
     """Use to create a sql object"""
+    print("IN")
     sqlobject = SQL.sql(colum, table, wherecol, whereval)
 
     return sqlobject
@@ -94,7 +95,9 @@ def getanswer(name, info, memory):
         for i in info:
             ilen -= 1
             if info == 'astro':
-                info = 'signe astrologique'
+                i = 'signe astrologique'
+            if info == 'date_naissance':
+                i = 'date de naissance'
             memory.info.append(info)
             if ilen > 1:
                 result = result + i + ", "
@@ -109,14 +112,21 @@ def getanswer(name, info, memory):
         inlen = len(info)
         if nalen == 1 and inlen == 1:
             sql = getsql(info, "Students", "prenom", name[0])
+            print("info ! ", info)
             if info[0] == "horoscope":
+                print("One !")
                 objSQL = createsql(info[0], "Students", "prenom", name[0])
                 result = "l'horoscope de " + name[0] + " est " + objSQL.getHoroscope()
 
             else:
                 if info[0] == 'astro':
                     info[0] = 'signe astrologique'
-                result = "le " + info[0] + " de " + name[0] + " est " + sql[0]
+                if info[0] == 'date_naissance':
+                    info[0] = 'date de naissance'
+                if info[0] == 'date_naissance' or info[0] == 'ville':
+                    result = "la " + info[0] + " de " + name[0] + " est " + sql[0]
+                else:
+                    result = "le " + info[0] + " de " + name[0] + " est " + sql[0]
             memory.answer.append(result)
             return result
 
@@ -133,13 +143,19 @@ def getanswer(name, info, memory):
                     record = sql[count]
 
                     if i == "horoscope":
+                        print("new !")
                         objSQL = createsql(i, "Students", "prenom", na)
                         result = "l'horoscope de " + na + " est " + objSQL.getHoroscope()
 
                     else:
                         if i == 'astro':
                             i = 'signe astrologique'
-                        result = result + "le " + i + " de " + na + " est "
+                        if i == 'date_naissance':
+                            i = 'date de naissance'
+                        if i == 'date_naissance' or i == 'ville':
+                            result = result + "la " + i + " de " + na + " est "
+                        else:
+                            result = result + "le " + i + " de " + na + " est "
                         if inlen > 1:
                             result = result + record + ", "
                         elif inlen == 1:
@@ -191,9 +207,11 @@ def bobot(question, memory):
 
         if len(list(set([_ for _ in keylist if _ is not None]))) == 0 and len(namelist) != 0:
             for info in memory.getInfo():
+                print("info : ", getkeyword(info))
                 if getkeyword(info):
                     keylist.append(info)
 
+        print(namelist, keylist, memory)
         return getanswer(namelist, keylist, memory)
 
     else:
