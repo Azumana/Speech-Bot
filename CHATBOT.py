@@ -54,7 +54,6 @@ def getdiffword(word):
 
 def createsql(colum, table, wherecol="Students", whereval="NULL"):
     """Use to create a sql object"""
-    print("IN")
     sqlobject = SQL.sql(colum, table, wherecol, whereval)
 
     return sqlobject
@@ -110,9 +109,7 @@ def getanswer(name, info, memory):
         inlen = len(info)
         if nalen == 1 and inlen == 1:
             sql = getsql(info, "Students", "prenom", name[0])
-            print("info ! ", info)
             if info[0] == "horoscope":
-                print("One !")
                 objSQL = createsql(info[0], "Students", "prenom", name[0])
                 result = "l'horoscope de " + name[0] + " est " + objSQL.getHoroscope()
 
@@ -136,7 +133,6 @@ def getanswer(name, info, memory):
                     record = sql[count]
 
                     if i == "horoscope":
-                        print("new !")
                         objSQL = createsql(i, "Students", "prenom", na)
                         result = "l'horoscope de " + na + " est " + objSQL.getHoroscope()
 
@@ -195,11 +191,9 @@ def bobot(question, memory):
 
         if len(list(set([_ for _ in keylist if _ is not None]))) == 0 and len(namelist) != 0:
             for info in memory.getInfo():
-                print("info : ", getkeyword(info))
                 if getkeyword(info):
                     keylist.append(info)
 
-        print(namelist, keylist, memory)
         return getanswer(namelist, keylist, memory)
 
     else:
