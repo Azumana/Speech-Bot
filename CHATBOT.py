@@ -1,5 +1,6 @@
 import json
 import random
+import difflib
 import SQL
 
 
@@ -18,7 +19,7 @@ def getdico():
 
 def getconvers(sentence):
     """Use to get usual conversations"""
-    docDico = openjson("document.json")
+    docDico = openjson("conversation.json")
     userDico = docDico["dico_1"]
     botDico = docDico["dico2"]
 
@@ -27,7 +28,8 @@ def getconvers(sentence):
 
             for k, v in userDico.items():
                 for w in v:
-                    if word.lower() == w.lower():
+                    if difflib.SequenceMatcher(None, w.lower(), word.lower()).ratio() > 0.8:
+                    #if word.lower() == w.lower():
                         botrep = random.choice(botDico[k])
                         return botrep
 
@@ -37,8 +39,17 @@ def getkeyword(word):
     dico = getdico()
     for k, v in dico.items():
         for w in v:
-            if word == w:
+            if difflib.SequenceMatcher(None, w, word).ratio() > 0.8:
+            #if word == w:
                 return k
+
+
+def getdiffword(word):
+    dico = getdico()
+    for k, v in dico.items():
+        for w in v:
+            if difflib.SequenceMatcher(None, w, word).ratio() > 0.8:
+                return w
 
 
 def createsql(colum, table, wherecol="Students", whereval="NULL"):
@@ -83,6 +94,8 @@ def getanswer(name, info, memory):
         result = "Sur qui veux-tu avoir les infos suivantes : "
         for i in info:
             ilen -= 1
+            if info == 'astro':
+                info = 'signe astrologique'
             memory.info.append(info)
             if ilen > 1:
                 result = result + i + ", "
@@ -104,6 +117,8 @@ def getanswer(name, info, memory):
                 result = "l'horoscope de " + name[0] + " est " + objSQL.getHoroscope()
 
             else:
+                if info[0] == 'astro':
+                    info[0] = 'signe astrologique'
                 result = "le " + info[0] + " de " + name[0] + " est " + sql[0]
             memory.answer.append(result)
             return result
@@ -126,6 +141,8 @@ def getanswer(name, info, memory):
                         result = "l'horoscope de " + na + " est " + objSQL.getHoroscope()
 
                     else:
+                        if i == 'astro':
+                            i = 'signe astrologique'
                         result = result + "le " + i + " de " + na + " est "
                         if inlen > 1:
                             result = result + record + ", "
@@ -161,7 +178,7 @@ def bobot(question, memory):
 
             keyword = getkeyword(word)
             if keyword == "prenom":
-                namelist.append(word)
+                namelist.append(getdiffword(word))
             elif keyword != "":
                 keylist.append(keyword)
 
@@ -175,8 +192,17 @@ def bobot(question, memory):
             for name in lastAnswer:
                 if getkeyword(name) == "prenom":
                     namelist.append(name)
+
+        if len(list(set([_ for _ in keylist if _ is not None]))) == 0 and len(namelist) != 0:
+            for info in memory.getInfo():
+                print("info : ", getkeyword(info))
+                if getkeyword(info):
+                    keylist.append(info)
+
         print(namelist, keylist, memory)
         return getanswer(namelist, keylist, memory)
 
     else:
         return "Je n'ai pas compris ta demande."
+
+
