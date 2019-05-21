@@ -74,10 +74,8 @@ if __name__ == '__main__':
         # Check record
         if record.reason == speechsdk.ResultReason.RecognizedSpeech:
             question = record.text.rstrip(".")
-            print("q = ", question)
             # get the answer from the chatbot program
             answer = bot.bobot(question, mem)
-            print(answer)
 
             # check if chatbot already answered to this question :-)
             if mem.answer.count(answer) > 1:
@@ -90,7 +88,6 @@ if __name__ == '__main__':
                 recordbis = speech_recognizer.recognize_once()
                 print("recordbis = ", recordbis)
                 if "s'il te plaît" in recordbis.text.lower():
-                    print("OUI !")
                     botres = ttsp.TextToSpeech(speech_key, service_region, answer)
                     botres.get_token()
                     botres.save_audio('answer.wav')
