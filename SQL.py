@@ -74,7 +74,6 @@ class sql:
 
     def getHoroscope(self):
 
-        print("START")
         web = requests.get("https://www.20minutes.fr/horoscope/")
         page = BeautifulSoup(web.content, "html.parser")
 
@@ -86,7 +85,6 @@ class sql:
         for i, v in enumerate(signe):
             horoscope[signe[i].string.replace("Horoscope ", "").lower()] = p[i * 2].string + p[i * 2 + 1].string
 
-        print("dico : ", horoscope)
         horoscope_perso = horoscope[str(self.selectRequest()).strip("[]'")]
 
         return horoscope_perso
