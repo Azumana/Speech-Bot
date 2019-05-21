@@ -69,7 +69,7 @@ if __name__ == '__main__':
     mem = MEMORY.Memory(record)
 
     # Use a loop for the conversation
-    while "au revoir." not in record.text.lower():
+    while "stop" not in record.text.lower():
 
         # Check record
         if record.reason == speechsdk.ResultReason.RecognizedSpeech:
